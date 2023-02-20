@@ -1,0 +1,1 @@
+djangorestframework-simplejwt[crypto]==5.2.2

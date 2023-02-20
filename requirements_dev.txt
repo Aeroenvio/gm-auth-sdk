@@ -1,0 +1,5 @@
+invoke
+twine
+wheel
+zest.releaser
+djangorestframework-simplejwt[crypto]==5.2.2
