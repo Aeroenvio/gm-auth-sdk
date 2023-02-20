@@ -2,25 +2,20 @@
 Usage
 =====
 
-To use gm-auth-sdk in a project, add it to your `INSTALLED_APPS`:
+Add `GMAuthentication` to `REST_FRAMEWORK`'s `DEFAULT_AUTHENTICATION_CLASSESS`':
 
 .. code-block:: python
 
-    INSTALLED_APPS = (
+    # Django Rest Framework
+    REST_FRAMEWORK = {
         ...
-        'gm_auth_sdk.apps.GmAuthSdkConfig',
-        ...
-    )
+        "DEFAULT_AUTHENTICATION_CLASSES": (
+            ...
+            "gm_auth_sdk.authentication.GMAuthentication",
+        ),
+    }
 
-Add gm-auth-sdk's URL patterns:
+Ensure `SIGNING_KEY` in `SIMPLE_JWT` is the same as the authentication service.
 
-.. code-block:: python
-
-    from gm_auth_sdk import urls as gm_auth_sdk_urls
-
-
-    urlpatterns = [
-        ...
-        url(r'^', include(gm_auth_sdk_urls)),
-        ...
-    ]
+On Authentication the user in request will be a
+`TokenUser` object. No database lookup will be performed.
