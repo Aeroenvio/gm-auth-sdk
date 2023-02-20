@@ -1,5 +1,5 @@
 =============================
-gm-auth-sdk
+Grandmercado Authentication SDK
 =============================
 
 .. image:: https://badge.fury.io/py/gm-auth-sdk.svg
@@ -11,42 +11,37 @@ gm-auth-sdk
 .. image:: https://codecov.io/gh/dfg-98/gm-auth-sdk/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/dfg-98/gm-auth-sdk
 
-SDK for Grandmercado Authentication
+Software Development Kit for Grandmercado Authentication.
 
-Documentation
--------------
+This package is intended to use only withing Grandmercado ecosystem.
+It share common authentication feautes needed for Grandmercado's services.
 
-The full documentation is at https://gm-auth-sdk.readthedocs.io.
 
 Quickstart
 ----------
 
 Install gm-auth-sdk::
 
-    pip install gm-auth-sdk
+    pip install git+https://github.com/Aeroenvio/gm-auth-sdk
 
-Add it to your `INSTALLED_APPS`:
-
-.. code-block:: python
-
-    INSTALLED_APPS = (
-        ...
-        'gm_auth_sdk.apps.GmAuthSdkConfig',
-        ...
-    )
-
-Add gm-auth-sdk's URL patterns:
+Add `GMAuthentication` to `REST_FRAMEWORK`'s `DEFAULT_AUTHENTICATION_CLASSESS`':
 
 .. code-block:: python
 
-    from gm_auth_sdk import urls as gm_auth_sdk_urls
-
-
-    urlpatterns = [
+    # Django Rest Framework
+    REST_FRAMEWORK = {
         ...
-        url(r'^', include(gm_auth_sdk_urls)),
-        ...
-    ]
+        "DEFAULT_AUTHENTICATION_CLASSES": (
+            ...
+            "gm_auth_sdk.authentication.GMAuthentication",
+        ),
+    }
+
+Ensure `SIGNING_KEY` in `SIMPLE_JWT` is the same as the authentication service.
+
+On Authentication the user in request will be a
+`TokenUser` object. No database lookup will be performed.
+
 
 Features
 --------
