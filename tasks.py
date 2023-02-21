@@ -103,7 +103,7 @@ def release(c, bumpsize=""):
     import gm_auth_sdk
 
     c.run("python setup.py sdist bdist_wheel")
-    c.run("twine upload dist/*")
+    # c.run("twine upload dist/*")
 
     c.run(
         'git tag -a {version} -m "New version: {version}"'.format(
@@ -111,4 +111,4 @@ def release(c, bumpsize=""):
         )
     )
     c.run("git push --tags")
-    c.run("git push origin master")
+    c.run("git push origin")

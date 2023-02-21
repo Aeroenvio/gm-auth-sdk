@@ -61,6 +61,18 @@ class TestGm_auth_sdk(APITestCase):
 
         self.assertEqual(response.status_code, 401)
 
+    def test_authentication_with_invalid_token(self):
+        access = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoiVGVzdCJ9fQ.nxGhzLp9Xbi-mN6OSO1SNiOYAQWjYlODuVNIj8E8fAA"
+
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access}")
+        url = reverse("test")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 401)
+
+        data = response.json()
+        self.assertEqual(data["code"], "token_not_valid")
+
     def test_token_models_fields(self):
         data = {
             "id": 1,
