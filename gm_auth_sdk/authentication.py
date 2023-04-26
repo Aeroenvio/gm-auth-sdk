@@ -21,7 +21,7 @@ class GMAuthentication(JWTStatelessUserAuthentication):
             # identifier claim.
             raise InvalidToken(_("Token contained no recognizable user identification"))
 
-        return api_settings.TOKEN_USER_CLASS(validated_token)
+        return api_settings.TOKEN_USER_CLASS(validated_token.get("user"))
 
 
 class TokenAuth(AuthBase):
