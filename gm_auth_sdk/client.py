@@ -10,7 +10,7 @@ from .models import Agency
 
 
 class GMAuthClient:
-    def __init__(self, credentials: Optional[dict]) -> None:
+    def __init__(self, credentials: Optional[dict] = None) -> None:
         if "GM_AUTH_API_URL" not in settings:
             raise ImproperlyConfigured(
                 "GM_AUTH_API_URL must be set in settings in order "
