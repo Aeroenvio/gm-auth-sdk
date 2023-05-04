@@ -11,22 +11,22 @@ from .models import Agency
 
 class GMAuthClient:
     def __init__(self, credentials: Optional[dict] = None) -> None:
-        if "GM_AUTH_API_URL" not in settings:
+        if not hasattr(settings, "GM_AUTH_API_URL"):
             raise ImproperlyConfigured(
                 "GM_AUTH_API_URL must be set in settings in order "
                 "to connect with Grandmercado Authentication API"
             )
 
-        self.auth_api = settings.get("GM_AUTH_API_URL")
+        self.auth_api = settings.GM_AUTH_API_URL
 
         if credentials is None:
-            if "GM_AUTH_CREDENTIALS" not in settings:
+            if not hasattr(settings, "GM_AUTH_CREDENTIALS"):
                 raise ImproperlyConfigured(
                     "GM_AUTH_CREDENTIALS must be set in settings in order "
                     "to connect with Grandmercado Authentication API"
                 )
 
-            credentials = settings.get("GM_AUTH_CREDENTIALS")
+            credentials = settings.GM_AUTH_CREDENTIALS
 
         self.access_token = self._get_access_token(credentials)
         self.session = requests.session()
