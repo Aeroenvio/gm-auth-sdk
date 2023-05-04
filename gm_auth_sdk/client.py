@@ -29,6 +29,7 @@ class GMAuthClient:
             credentials = settings.GM_AUTH_CREDENTIALS
 
         self.access_token = self._get_access_token(credentials)
+
         self.session = requests.session()
         self.session.auth = BearerAuth(token=self.access_token)
 
@@ -42,16 +43,26 @@ class GMAuthClient:
 
     def create_agency(self, agency: Agency):
         url = f"{self.auth_api}/admin/agencies/"
-        response = self.session.post(url, json=asdict(agency))
+
+        files = {}
+
+        with open(agency.logo, "rb") as logo_file:
+            files["logo"] = logo_file
+        with open(agency.logo_small, "rb") as logo_small_file:
+            files["logo_small"] = logo_small_file
+        with open(agency.favicon, "rb") as favicon_file:
+            files["favicon"] = favicon_file
+
+        response = self.session.post(url, data=asdict(agency), files=files)
 
         if response.status_code != 200:
             raise Exception(response.text)
 
         return response.json()
 
-    def update_agency(self, agency: Agency):
-        url = f"{self.auth_api}/admin/agencies/{agency.id}/"
-        response = self.session.put(url, json=asdict(agency))
+    def update_agency(self, partial_agency):
+        url = f"{self.auth_api}/admin/agencies/{partial_agency['id']}/"
+        response = self.session.put(url, json=partial_agency)
 
         if response.status_code != 200:
             raise Exception(response.text)
@@ -59,12 +70,15 @@ class GMAuthClient:
         return response.json()
 
     def _get_access_token(self, credentials: dict) -> str:
+        print(credentials)
         response = requests.post(
             f"{self.auth_api}/accounts/login/",
             data=credentials,
+            headers={"X-APP-ID": credentials.get("agency")},
         )
+        print(response.request.headers)
 
         if response.status_code != 200:
             raise Exception(response.text)
-
-        return response.json()["access"]
+        print(response.json())
+        return response.json()["access_token"]
