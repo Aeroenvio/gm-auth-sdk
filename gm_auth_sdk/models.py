@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from django.contrib.auth import models as auth_models
 from django.db.models.manager import EmptyManager
 from django.utils.functional import cached_property
@@ -116,3 +118,18 @@ class TokenUser:
     def __getattr__(self, attr):
         """This acts as a backup attribute getter for custom claims defined in Token serializers."""
         return self._user.get(attr, None)
+
+
+@dataclass
+class Agency:
+    app_id: str
+    name: str
+    code: str
+    domain: str
+    primary_color: str
+    logo: str
+    logo_small: str
+    favicon: str
+    phone: str
+    email: str
+    address: str
