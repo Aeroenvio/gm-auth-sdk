@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import Optional
 
 import requests
 from django.conf import settings
@@ -9,7 +10,7 @@ from .models import Agency
 
 
 class GMAuthClient:
-    def __init__(self, credentials: dict) -> None:
+    def __init__(self, credentials: Optional[dict]) -> None:
         if "GM_AUTH_API_URL" not in settings:
             raise ImproperlyConfigured(
                 "GM_AUTH_API_URL must be set in settings in order "
@@ -17,6 +18,15 @@ class GMAuthClient:
             )
 
         self.auth_api = settings.get("GM_AUTH_API_URL")
+
+        if credentials is None:
+            if "GM_AUTH_CREDENTIALS" not in settings:
+                raise ImproperlyConfigured(
+                    "GM_AUTH_CREDENTIALS must be set in settings in order "
+                    "to connect with Grandmercado Authentication API"
+                )
+
+            credentials = settings.get("GM_AUTH_CREDENTIALS")
 
         self.access_token = self._get_access_token(credentials)
         self.session = requests.session()
