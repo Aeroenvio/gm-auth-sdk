@@ -98,3 +98,8 @@ class GMAuthClient:
         if response.status_code != 200:
             raise Exception(response.text)
         return response.json()["access_token"]
+
+
+client = GMAuthClient()
+
+__all__ = ["client", "GMAuthClient"]
