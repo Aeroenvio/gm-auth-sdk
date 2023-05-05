@@ -1,9 +1,10 @@
-from dataclasses import asdict
+from dataclasses import asdict, fields
 from typing import Optional
 
 import requests
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from rest_framework.exceptions import ValidationError
 
 from .authentication import BearerAuth
 from .models import Agency
@@ -41,31 +42,49 @@ class GMAuthClient:
 
     #     data = response.json()
 
-    def create_agency(self, agency: Agency):
-        url = f"{self.auth_api}/admin/agencies/"
+    def create_agency(self, agency: Agency) -> Agency:
+        url = f"{self.auth_api}/admin/accounts/agency/"
 
         files = {}
+        if agency.logo:
+            files["logo"] = agency.logo
+        if agency.logo_small:
+            files["logo_small"] = agency.logo_small
+        if agency.favicon:
+            files["favicon"] = agency.favicon
 
-        with open(agency.logo, "rb") as logo_file:
-            files["logo"] = logo_file
-        with open(agency.logo_small, "rb") as logo_small_file:
-            files["logo_small"] = logo_small_file
-        with open(agency.favicon, "rb") as favicon_file:
-            files["favicon"] = favicon_file
+        agency_data = asdict(agency)
+        agency_data.pop("logo")
+        agency_data.pop("logo_small")
+        agency_data.pop("favicon")
 
-        response = self.session.post(url, data=asdict(agency), files=files)
+        try:
+            response = self.session.post(url, data=agency_data, files=files)
+            response.raise_for_status()
+            # TODO: handle errors, just printing and re-raising for now
+        except requests.exceptions.HTTPError as errh:
+            if response.status_code == 400:
+                raise ValidationError(response.json())
+            raise errh
+        except requests.exceptions.ConnectionError as errc:
+            raise errc
+        except requests.exceptions.Timeout as errt:
+            raise errt
+        except requests.exceptions.RequestException as err:
+            raise err
 
-        if response.status_code != 200:
-            raise Exception(response.text)
+        response_data = response.json()
+        response_data = {
+            k: v
+            for k, v in response_data.items()
+            if k in tuple(e.name for e in fields(Agency).keys())
+        }
 
-        return response.json()
+        return Agency(**response_data)
 
     def update_agency(self, partial_agency):
-        url = f"{self.auth_api}/admin/agencies/{partial_agency['id']}/"
+        url = f"{self.auth_api}/admin/accounts/agency/{partial_agency['app_id']}/"
         response = self.session.put(url, json=partial_agency)
-
-        if response.status_code != 200:
-            raise Exception(response.text)
 
         return response.json()
 
