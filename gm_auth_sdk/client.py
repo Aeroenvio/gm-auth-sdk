@@ -77,7 +77,7 @@ class GMAuthClient:
         response_data = {
             k: v
             for k, v in response_data.items()
-            if k in tuple(e.name for e in fields(Agency).keys())
+            if k in tuple(e.name for e in fields(Agency))
         }
 
         return Agency(**response_data)
@@ -89,15 +89,12 @@ class GMAuthClient:
         return response.json()
 
     def _get_access_token(self, credentials: dict) -> str:
-        print(credentials)
         response = requests.post(
             f"{self.auth_api}/accounts/login/",
             data=credentials,
             headers={"X-APP-ID": credentials.get("agency")},
         )
-        print(response.request.headers)
 
         if response.status_code != 200:
             raise Exception(response.text)
-        print(response.json())
         return response.json()["access_token"]
