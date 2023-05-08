@@ -82,11 +82,45 @@ class GMAuthClient:
 
         return Agency(**response_data)
 
-    def update_agency(self, partial_agency):
-        url = f"{self.auth_api}/admin/accounts/agency/{partial_agency['app_id']}/"
-        response = self.session.put(url, json=partial_agency)
+    def update_agency(self, agency: Agency):
+        url = f"{self.auth_api}/admin/accounts/agency/{agency.app_id}/"
 
-        return response.json()
+        files = {}
+        if agency.logo:
+            files["logo"] = agency.logo
+        if agency.logo_small:
+            files["logo_small"] = agency.logo_small
+        if agency.favicon:
+            files["favicon"] = agency.favicon
+
+        agency_data = asdict(agency)
+        agency_data.pop("logo")
+        agency_data.pop("logo_small")
+        agency_data.pop("favicon")
+
+        try:
+            response = self.session.put(url, data=agency_data, files=files)
+            response.raise_for_status()
+            # TODO: handle errors, just printing and re-raising for now
+        except requests.exceptions.HTTPError as errh:
+            if response.status_code == 400:
+                raise ValidationError(response.json())
+            raise errh
+        except requests.exceptions.ConnectionError as errc:
+            raise errc
+        except requests.exceptions.Timeout as errt:
+            raise errt
+        except requests.exceptions.RequestException as err:
+            raise err
+
+        response_data = response.json()
+        response_data = {
+            k: v
+            for k, v in response_data.items()
+            if k in tuple(e.name for e in fields(Agency))
+        }
+
+        return Agency(**response_data)
 
     def _get_access_token(self, credentials: dict) -> str:
         response = requests.post(
@@ -100,6 +134,4 @@ class GMAuthClient:
         return response.json()["access_token"]
 
 
-client = GMAuthClient()
-
-__all__ = ["client", "GMAuthClient"]
+__all__ = ["GMAuthClient"]
