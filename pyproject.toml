@@ -1,0 +1,44 @@
+[tool.isort]
+profile = "black"
+
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gm-auth-sdk"
+version = "1.0.2"
+description = "SDK for Grandmercado Authentication"
+readme = "README.md"
+authors = [{ name = "Dario Fragas", email = "dariofg98@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+     "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        'Intended Audience :: Developers',  # Define that your audience are developers
+        'Topic :: Software Development :: Build Tools'
+]
+keywords=['django', 'python', 'django-rest-framework', "sdk", "auth"]
+dependencies = [
+    "djangorestframework-simplejwt[crypto] >= 5",
+"requests"
+
+]
+requires-python = ">=3.8"
+
+
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "coverage"]
+
+[project.urls]
+Homepage = "https://github.com/Aeroenvio/gm-auth-sdk"
+
+
+[tool.setuptools.packages.find]
+include = ["gm_auth_sdk*"]
+
+[tool.flake8]
+max-line-lenght=80
