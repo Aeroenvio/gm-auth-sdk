@@ -1,2 +1,2 @@
-djangorestframework-simplejwt[crypto]==5.2.2
-requests==2.28.2
+djangorestframework-simplejwt[crypto]>=5
+requests>=2.28.2
