@@ -4,6 +4,6 @@ flake8>=2.1.0
 tox>=1.7.0
 codecov>=2.0.0
 djangorestframework-simplejwt[crypto]==5.2.2
-requests==2.28.2
+requests==2.31.0
 
 # Additional test requirements go here
