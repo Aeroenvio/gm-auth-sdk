@@ -7,7 +7,7 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework.exceptions import ValidationError
 
 from .authentication import BearerAuth
-from .models import Agency
+from .models import Agency, User
 
 
 class GMAuthClient:
@@ -121,6 +121,50 @@ class GMAuthClient:
         }
 
         return Agency(**response_data)
+
+    def create_user(
+        self,
+        email,
+        password,
+        is_superuser=False,
+        is_active=True,
+        is_staff=False,
+        name="",
+        phone="",
+        email_verified=False,
+        phone_verified=False,
+    ):
+        url = f"{self.auth_api}/admin/accounts/user/"
+
+        data = {
+            "email": email,
+            "password": password,
+            "is_superuser": is_superuser,
+            "is_active": is_active,
+            "is_staff": is_staff,
+            "name": name,
+            "phone": phone,
+            "email_verified": email_verified,
+            "phone_verified": phone_verified,
+        }
+
+        try:
+            response = self.session.post(url, data=data)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            if response.status_code == 400:
+                raise ValidationError(response.json())
+            raise errh
+        except requests.exceptions.ConnectionError as errc:
+            raise errc
+        except requests.exceptions.Timeout as errt:
+            raise errt
+        except requests.exceptions.RequestException as err:
+            raise err
+
+        user = response.json()
+
+        return User(**user)
 
     def _get_access_token(self, credentials: dict) -> str:
         response = requests.post(

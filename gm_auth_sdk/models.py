@@ -116,7 +116,8 @@ class TokenUser:
         return self.email
 
     def __getattr__(self, attr):
-        """This acts as a backup attribute getter for custom claims defined in Token serializers."""
+        """This acts as a backup attribute getter for custom claims
+        defined in Token serializers."""
         return self._user.get(attr, None)
 
 
@@ -133,3 +134,14 @@ class Agency:
     phone: str
     email: str
     address: str
+
+
+@dataclass
+class User:
+    id: str
+    email: str
+    name: str
+    phone: str
+    agency: str
+    email_verified: bool = False
+    phone_verified: bool = False
