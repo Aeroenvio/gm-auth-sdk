@@ -44,16 +44,3 @@ class BearerAuth(AuthBase):
     def __call__(self, request):
         request.headers["Authorization"] = f"Bearer {self.token}"
         return request
-
-
-class GMAuth(AuthBase):
-    """Attaches a token to the given request object."""
-
-    def __init__(self, token, agency):
-        self.token = token
-        self.agency = agency
-
-    def __call__(self, request):
-        request.headers["Authorization"] = f"Bearer {self.token}"
-        request.headers["X-APP-ID"] = f"{self.agency}"
-        return request
