@@ -134,6 +134,7 @@ class Agency:
     phone: str
     email: str
     address: str
+    password: str
 
 
 @dataclass
