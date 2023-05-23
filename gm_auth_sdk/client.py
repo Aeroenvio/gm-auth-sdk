@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework.exceptions import ValidationError
 
-from .authentication import BearerAuth
+from .authentication import GMAuth
 from .models import Agency, User
 
 
@@ -32,7 +32,10 @@ class GMAuthClient:
         self.access_token = self._get_access_token(credentials)
 
         self.session = requests.session()
-        self.session.auth = BearerAuth(token=self.access_token)
+        self.session.auth = GMAuth(
+            token=self.access_token,
+            agency=credentials.get("GM_AUTH_AGENCY", ""),
+        )
 
     # def list_agencies(self):
     #     response = self.session.get(f"{self.auth_api}/admin/agencies/")
