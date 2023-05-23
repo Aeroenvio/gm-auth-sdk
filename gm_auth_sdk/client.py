@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError
 
 from .authentication import BearerAuth
 from .models import Agency, User
+from .utils import class_from_args
 
 
 class GMAuthClient:
@@ -164,7 +165,7 @@ class GMAuthClient:
 
         user = response.json()
 
-        return User(**user)
+        return class_from_args(User, user)
 
     def _get_access_token(self, credentials: dict) -> str:
         response = requests.post(
