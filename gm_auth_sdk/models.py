@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from django.contrib.auth import models as auth_models
 from django.db.models.manager import EmptyManager
@@ -134,7 +135,6 @@ class Agency:
     phone: str
     email: str
     address: str
-    password: str
 
 
 @dataclass
@@ -146,3 +146,4 @@ class User:
     agency: str
     email_verified: bool = False
     phone_verified: bool = False
+    password: Optional[str] = None
