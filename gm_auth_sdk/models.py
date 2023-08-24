@@ -147,3 +147,7 @@ class User:
     email_verified: bool = False
     phone_verified: bool = False
     password: Optional[str] = None
+
+    @property
+    def pk(self):
+        return self.id
