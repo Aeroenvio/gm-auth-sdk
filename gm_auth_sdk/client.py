@@ -4,6 +4,7 @@ from typing import Optional
 import requests
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpRequest
 from rest_framework.exceptions import ValidationError
 
 from .authentication import BearerAuth
@@ -163,6 +164,35 @@ class GMAuthClient:
         except requests.exceptions.RequestException as err:
             raise err
 
+        user = response.json()
+
+        return class_from_args(User, user)
+    
+    def get_current_user(self, request: HttpRequest):
+        bearer_token = request.headers.get('HTTP_AUTHORIZATION', '')
+        token_parts = bearer_token.split(' ')
+        if len(token_parts) != 2 or token_parts[0] != 'Bearer':
+            return None
+
+        token = token_parts[1]
+
+        url = f"{self.auth_api}/accounts/user/",
+
+        try:
+            response = requests.get(url, auth=BearerAuth(token))
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            if response.status_code == 400:
+                raise ValidationError(response.json())
+            raise errh
+        except requests.exceptions.ConnectionError as errc:
+            raise errc
+        except requests.exceptions.Timeout as errt:
+            raise errt
+        except requests.exceptions.RequestException as err:
+            raise err
+
+        
         user = response.json()
 
         return class_from_args(User, user)
