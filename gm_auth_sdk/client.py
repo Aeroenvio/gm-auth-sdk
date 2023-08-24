@@ -169,7 +169,7 @@ class GMAuthClient:
         return class_from_args(User, user)
     
     def get_current_user(self, request: HttpRequest):
-        bearer_token = request.headers.get('HTTP_AUTHORIZATION', '')
+        bearer_token = request.headers.get('AUTHORIZATION', '')
         token_parts = bearer_token.split(' ')
         if len(token_parts) != 2 or token_parts[0] != 'Bearer':
             return None
