@@ -176,7 +176,7 @@ class GMAuthClient:
 
         token = token_parts[1]
 
-        url = f"{self.auth_api}/accounts/user/",
+        url = f"{self.auth_api}/accounts/user/"
 
         try:
             response = requests.get(url, auth=BearerAuth(token))
